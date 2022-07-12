@@ -30,11 +30,10 @@ jobs:
           node-version: '12'
 
       - name: Install Octopus CLI
-        run: |
-          sudo apt update && sudo apt install --no-install-recommends gnupg curl ca-certificates apt-transport-https && \
-          curl -sSfL https://apt.octopus.com/public.key | sudo apt-key add - && \
-          sudo sh -c "echo deb https://apt.octopus.com/ stable main > /etc/apt/sources.list.d/octopus.com.list" && \
-          sudo apt update && sudo apt install octopuscli
+        uses: OctopusDeploy/install-octopus-cli-action@v1.2.0
+        with:
+          version: latest
+
 
       - name: Cache node modules
         uses: actions/cache@v2
@@ -64,4 +63,9 @@ jobs:
         run: octo pack --id="Octopus.Library.Web" --format="Zip" --version="${{ env.PACKAGE_VERSION }}" --basePath="./dist/" --outFolder="./packages"
 
       - name: Push Octopus.Library.Web to Octopus
-        run: octo push --package="./packages/Octopus.Library.Web.${{ env.PACKAGE_VERSION }}.zip" --server="${{ secrets.OCTOPUS_SERVER_URL }}" --apiKey="${{ secrets.OCTOPUS_API_KEY }}"
+        uses: OctopusDeploy/push-package-action@v1.1.2
+        with:
+          api_key: ${{ secrets.OCTOPUS_API_KEY }}
+          server: ${{ secrets.OCTOPUS_SERVER_URL }}
+          packages: "./packages/Octopus.Library.Web.${{ env.PACKAGE_VERSION }}.zip"
+          space: ${{ secrets.OCTOPUSSERVER_SPACE }}
