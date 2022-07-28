@@ -78,6 +78,5 @@ jobs:
           release_number: "${{ env.PACKAGE_VERSION }}"
           packages:
             "Octopus.Library.Web:${{ env.PACKAGE_VERSION }}"
-          deploy_to: 'Development'
-          deploy_to: 'Test'
+          deploy_to: 'Development,Test'
           wait_for_deployment: true
